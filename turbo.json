@@ -1,0 +1,104 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": [
+    "**/.env.*production",
+    "package.json"
+  ],
+  "globalEnv": [
+    "ENCRYPTION_KEY",
+    "SECRET_KEY_NUMBER",
+    "JWT_SECRET",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "S3_REGION",
+    "S3_BUCKET",
+    "S3_ACCESS_KEY_ID",
+    "DATABASE_PASSWORD",
+    "DATABASE_USER",
+    "S3_SECRET_ACCESS_KEY",
+    "S3_ENDPOINT",
+    "TWILIO_ACCOUNT_SID",
+    "TWILIO_AUTH_TOKEN",
+    "TWILIO_WHATSAPP_NUMBER",
+    "ADMIN_WHATSAPP_NUMBER",
+    "ADMIN_NEXTAUTH_URL",
+    "NEXTAUTH_URL",
+    "NODE_ENV"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "db:deploy"],
+      "env": [
+        "ENCRYPTION_KEY",
+        "SECRET_KEY_NUMBER",
+        "JWT_SECRET",
+        "S3_REGION",
+        "S3_BUCKET",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "S3_ACCESS_KEY_ID",
+        "S3_SECRET_ACCESS_KEY",
+        "S3_ENDPOINT",
+        "DATABASE_PASSWORD",
+        "DATABASE_USER",
+        "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN",
+        "TWILIO_WHATSAPP_NUMBER",
+        "ADMIN_WHATSAPP_NUMBER",
+        "ADMIN_NEXTAUTH_URL",
+        "NEXTAUTH_URL",
+        "NODE_ENV"
+      ],
+      "inputs": [
+        "src/**/*.{js,jsx,ts,tsx}",
+        "package.json",
+        "tsconfig.json",
+        ".env.*",
+        "next.config.js"
+      ],
+      "outputs": [".next/**", "dist/**", "build/**"],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "outputs": [],
+      "inputs": [
+        "src/**/*.{js,jsx,ts,tsx}",
+        ".eslintrc.*",
+        ".prettierrc.*"
+      ]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"],
+      "inputs": [
+        "src/**/*.{js,jsx,ts,tsx}",
+        "tsconfig.json"
+      ],
+      "outputs": []
+    },
+    "dev": {
+      "dependsOn": ["db:deploy"],
+      "cache": false,
+      "persistent": true
+    },
+    "db:generate": {
+      "cache": false,
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["prisma/client/**"]
+    },
+    "db:push": {
+      "cache": false,
+      "inputs": ["prisma/schema.prisma"]
+    },
+    "db:seed": {
+      "cache": false,
+      "inputs": ["prisma/seed.ts"]
+    },
+    "db:deploy": {
+      "dependsOn": ["db:generate", "db:push", "db:seed"],
+      "cache": false,
+      "inputs": ["prisma/**/*"]
+    }
+  }
+}

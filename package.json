@@ -1,0 +1,35 @@
+{
+  "name": "ecommerce",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build": "dotenv -e .env.production turbo run build",
+    "dev": "dotenv -e .env.local turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "db:seed": "turbo run db:seed",
+    "db:deploy": "turbo run db:deploy"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "turbo": "^2.3.0",
+    "typescript": "5.5.4"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@10.5.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@radix-ui/react-select": "^2.1.2",
+    "dotenv": "^16.4.5",
+    "next": "15.0.3",
+    "dotenv-cli": "^7.4.3"
+  }
+}

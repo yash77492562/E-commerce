@@ -1,0 +1,20 @@
+{
+  "name": "@repo/s3_database",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.699.0",
+    "@aws-sdk/s3-request-presigner": "^3.699.0"
+  },
+  "exports": {
+    "./client": "./src/utils.ts",
+    "./type":"./src/types.ts"
+  }
+}

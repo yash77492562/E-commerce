@@ -1,0 +1,26 @@
+{
+  "name": "@repo/prisma_database",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "ts-node -P tsconfig-seed.json seeding.ts",
+    "db:deploy": "prisma generate && prisma db push && ts-node -P tsconfig-seed.json seeding.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "axios": "^1.7.7"
+  },
+  "exports": {
+    "./client": "./src/prisma.ts"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}

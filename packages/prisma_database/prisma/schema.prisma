@@ -1,0 +1,224 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               String              @id @default(uuid())
+  username         String
+  password         String 
+  email       String @unique
+  phone    String @unique
+  isActive Boolean @default(true)
+  loginAttempts Int @default(0)
+  lastLoginAttempt DateTime @default(now())
+  token  Token[]
+  password_otp  Password_otp[]
+  order  Order[]
+  cart Cart[]
+}
+model Admin {
+  id               String              @id @default(uuid())
+  username         String
+  password         String 
+  email       String @unique
+  phone    String @unique
+  token  Token[]
+  password_otp  Password_otp[]
+}
+
+model Token{
+  id String @id @default(uuid())
+  email_token String @unique
+  phone_token String @unique
+  userId     String?
+  adminId String?
+  user User?  @relation(fields: [userId] , references: [id])
+  admin Admin?  @relation(fields: [adminId] , references: [id])
+}
+ 
+model Password_otp{
+  id String @id @default(uuid())
+  otp String @unique
+  userId String? 
+  adminId String?
+  created_at   DateTime @default(now())
+  expires_at   DateTime
+  user User? @relation(fields: [userId],references: [id])
+  admin Admin?  @relation(fields: [adminId] , references: [id])
+}
+
+model Product {
+  id            String           @id @default(uuid())
+  title         String     
+  slug          String   @unique  @default("default-slug")
+  description   String
+  price         Int
+  discount      Int?
+  discountLessValue    Int? 
+  discount_rate Int? @default(0)
+  tags          String[] @default(["marvel","stone"])
+  category      String?   
+  subCategory    String? 
+  uploaded_at DateTime @default(now())
+  product_images ProductImage[]  
+  cart  Cart[]
+  orderItem OrderItem[]
+
+}
+model Cart {
+  id String @id @default(uuid())
+  productId String
+  userId String
+  uploaded_at       DateTime    @default(now())
+  user User? @relation(fields: [userId],references: [id])
+  product       Product  @relation(fields: [productId], references: [id])
+
+}
+model Home {
+  id            String           @id @default(uuid())
+  title         String?  
+  slug          String   @unique  @default("default-home-slug")
+  first_para    String?
+  second_para   String?
+  third_para    String?
+  uploaded_at   DateTime @default(now())
+  home_images   HomeImage[]
+}
+
+model HomeImage  {
+  id            String   @id @default(uuid())
+  index         Int       @default(0)
+  home_id       String   
+  image_key     String   // S3 key for the image
+  image_url     String   // Signed URL or path
+  is_main       Boolean  @default(false)
+  uploaded_at   DateTime @default(now())
+  home          Home     @relation(fields: [home_id], references: [id], onDelete: Cascade)
+}
+model HomeMain{
+  id String @id @default(uuid())
+  heading String
+  first_para String
+  second_para String
+  third_para  String 
+}
+model HomeInfo{
+  id String @id @default(uuid())
+  heading String
+  para String
+}
+model Footer {
+  id String @id @default(uuid())
+  companyName String
+  address String
+  phone String
+  open String
+  close String
+  email String
+}
+model Contact {
+  id String @id @default(uuid())
+  address_main String
+  address_city String
+  email String
+  phone_main String
+  phone_second String
+  sunday String
+  monday String
+  tuesday String
+  wednesday String
+  thursday String
+  friday String
+  saturday String   
+}
+model About {
+  id            String           @id @default(uuid())
+  heading         String 
+  first_para    String
+  second_para   String
+  third_para    String
+  four_para    String
+  uploaded_at   DateTime @default(now())
+  about_images   AboutImage[]
+}
+
+model AboutImage  {
+  id            String   @id @default(uuid())
+  index         Int       @default(0)
+  position      String
+  about_id       String   
+  image_key     String   // S3 key for the image
+  image_url     String   // Signed URL or path
+  is_main       Boolean  @default(false)
+  uploaded_at   DateTime @default(now())
+  about          About     @relation(fields: [about_id], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id               String            @id @default(uuid())
+  name             String
+  phone            String
+  country          String
+  state            String
+  city             String
+  landMark         String
+  address          String
+  pinCode          String
+  track_change_at  DateTime   @default(now())
+  uploaded_at       DateTime    @default(now())
+  order_status     order_status      @default(processing)
+  
+  // New fields for comprehensive order tracking 
+  orderItems       OrderItem[]
+  subtotal         Decimal
+  tax              Decimal           @default(0)
+  shipping         Decimal           @default(0)
+  total            Decimal
+  
+  transactionId    String            @unique
+  transactionStatus transactionStatus
+  
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+}
+
+model OrderItem {
+  id               String            @id @default(uuid())
+  orderId          String
+  productId        String
+  quantity         Int
+  price            Decimal
+  
+  order            Order             @relation(fields: [orderId], references: [id])
+  product          Product           @relation(fields: [productId], references: [id])
+}
+model ProductImage  {
+  id            String   @id @default(uuid())
+  index         Int       @default(0)
+  product_id    String   
+  image_key     String   // S3 key for the image
+  image_url     String   // Signed URL or path
+  is_main       Boolean  @default(false)
+  uploaded_at   DateTime @default(now())
+
+  product       Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+enum order_status {
+  processing
+  out_for_delivery
+  delivered
+}
+enum transactionStatus {
+  failed
+  process
+  success
+}
