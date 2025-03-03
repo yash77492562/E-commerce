@@ -85,7 +85,7 @@ export const MoreLike: React.FC<MoreLikeProps> = ({ tags, id }) => {
   }
 
   return (
-    <div className="mt-8 w-full h-screen overflow-y-auto hide-scrollbar">
+    <div className="mt-8 w-full overflow-x-auto hide-scrollbar">
       <h2 className="text-2xl font-semibold mb-4">More Like This</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 h-full overflow-y-auto hide-scrollbar gap-4 auto-rows-auto">
         {recommendedProducts.map((product) => (

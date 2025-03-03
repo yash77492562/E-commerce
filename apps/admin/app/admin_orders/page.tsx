@@ -154,7 +154,7 @@ export default function AdminOrdersPage() {
 
         {/* Total Price */}
         <div className="p-4 border-b">
-          <p className="font-bold text-lg">Total: ${order.total}</p>
+          <p className="font-bold text-lg">Total: ${Number(order.total)/100}</p>
         </div>
 
         {/* Order Items - Scrollable for all screen sizes */}
@@ -179,7 +179,7 @@ export default function AdminOrdersPage() {
                 </div>
               )}
               <div className="flex flex-col justify-center">
-                <p className="font-medium">${item.price}</p>
+                <p className="font-medium">${Number(item.price)/100}</p>
                 <p className="font-medium">Qty: {item.quantity}</p>
               </div>
             </div>

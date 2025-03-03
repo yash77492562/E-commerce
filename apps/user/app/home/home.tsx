@@ -58,18 +58,18 @@ export const Page = () => {
   if (!homeMainData) return null;
 
   return (
-    <div className="w-full">
-      <div className="w-full h-screen bg-home_bg bg-center bg-cover flex flex-col gap-16 justify-center items-center relative">
+    <div className="w-full min-h-[500px]">
+      <div className="w-full min-h-[500px] max-h-[800px] h-screen bg-home_bg bg-center whitespace-normal bg-cover flex flex-col gap-16 justify-center items-center relative before:content-[''] before:absolute  before:inset-0 before:bg-black before:opacity-60">
         {homeMainData.heading && (
-          <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extralight sm:font-light md:font-normal lg:font-medium">
+          <p className="text-2xl sm:text-3xl z-10 md:text-4xl lg:text-3xl font-extralight sm:font-light md:font-normal lg:font-medium">
             {homeMainData.heading} 
           </p>
         )}
         {(homeMainData.first_para || homeMainData.second_para || homeMainData.third_para) && (
-          <div className="flex flex-col justify-center items-center gap-2">
+          <div className="flex flex-col z-10 justify-center items-center gap-2">
             <div>
               {homeMainData.first_para && (
-                <p className="text-xl font-extralight sm:font-median md:font-medium lg:font-medium">
+                <p className="text-xl font-extralight sm:font-normal md:font-normal lg:font-normal">
                   {homeMainData.first_para} 
                 </p>
               )}
@@ -88,7 +88,7 @@ export const Page = () => {
             )}
           </div>
         )}
-        <button className="absolute w-[150px] font-bold left-1/2 bottom-20 -translate-x-1/2 bg-white bg-opacity-50 text-black py-3 px-6 shadow-lg hover:bg-white hover:bg-opacity-80 transition-all duration-300">
+        <button className="absolute z-10 w-[150px] hover:shadow-md  left-1/2 bottom-20 -translate-x-1/2 border border-white bg-opacity-50 text-white py-3 px-6 ">
           <Link href="/shop">
             Shop
           </Link>

@@ -46,7 +46,7 @@ const GalleryFooter = () => {
   if (!footerData) return null;
 
   return (
-    <footer className="bg-ibisWhite py-8 px-4 lg:px-8 border-t border-gray-200">
+    <footer className="bg-background py-8 px-4 lg:px-8 border-t border-gray-200">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center lg:items-start space-y-8 lg:space-y-0">
         <div className="flex flex-col items-center lg:items-start space-y-8 w-full lg:w-auto">
           <div className="flex flex-col items-center sm:items-start space-y-2 sm:space-y-0 sm:flex-row sm:space-x-4 text-customText1">

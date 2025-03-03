@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} bg-ibisWhite` }>
+      <body className={`${geistSans.variable} ${geistMono.variable} max-h-[800px] bg-background` }>
         <LayoutWrapper
           navbar={<NavBar />}
           footer={<GalleryFooter />}

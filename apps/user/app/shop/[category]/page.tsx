@@ -212,8 +212,8 @@ export default function CategoryPage() {
                   className={cn(
                     "px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap",
                     selectedCategory === 'All'
-                      ? "bg-blue-100 text-blue-600 font-semibold"
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                      ? " text-foreground"
+                      : "hover:bg-gray-100 text-font-foreground/80"
                   )}
                   onClick={() => handleCategoryChange('All')}
                 >
@@ -232,8 +232,8 @@ export default function CategoryPage() {
                       className={cn(
                         "px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap",
                         selectedCategory === category.toLowerCase() && !selectedSubCategory
-                          ? "bg-blue-100 text-blue-600 font-semibold"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                        ? " text-foreground"
+                        : "hover:bg-gray-100 text-font-foreground/80"
                       )}
                       onClick={() => {
                         if (hasSubcategories) {
@@ -270,9 +270,9 @@ export default function CategoryPage() {
                       key={subCat.subCategory}
                       className={cn(
                         "px-4 py-3 rounded-lg text-center transition-colors duration-300",
-                        selectedSubCategory === subCat.subCategory?.toLowerCase()
-                          ? "bg-green-100 text-green-600 font-semibold"
-                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                        selectedSubCategory === subCat.subCategory?.toUpperCase()
+                        ? " text-foreground"
+                        : "hover:bg-gray-100 text-font-foreground/80"
                       )}
                       onClick={() => handleCategoryChange(activeCategory, subCat.subCategory)}
                     >
@@ -308,12 +308,12 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="w-full bg-ibisWhite overflow-y-auto hide-scrollbar">
+    <div className="w-full  overflow-y-auto hide-scrollbar">
       <div className="bg-marvel h-[70vh] text-white w-full bg-cover bg-center flex justify-center items-center">
         <div className="flex flex-col gap-4 justify-center items-center">
           <h1 className="font-semibold text-4xl md:text-5xl">Welcome To</h1>
           <h1 className="font-semibold text-4xl md:text-5xl">Our Gallery</h1>
-          <div className="relative w-[500px] mt-5 mx-auto">
+          <div className="relative w-[500px] mt-10 mx-auto">
             <input
               type="text"
               placeholder="Search"
@@ -371,7 +371,7 @@ export default function CategoryPage() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 h-full overflow-y-auto hide-scrollbar md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-auto">
-          {products.map((product) => (
+          {products.map((product: Product) => (
             <div key={product.id} className="relative h-full">
               <Link href={`/shop/product/${product.slug}`} className="group h-full">
                 <div className="overflow-hidden h-full flex flex-col">
@@ -388,35 +388,35 @@ export default function CategoryPage() {
                       />
                     </div>
                   ) : (
-                    <div className="w-full pt-[100%] relative ">
+                    <div className="w-full pt-[100%] relative bg-gray-200">
                       <div className="absolute inset-0 flex items-center justify-center">
                         No Image
                       </div>
                     </div>
                   )}
-
-                  <div className="p-4 flex flex-col justify-between flex-grow">
-                    <div>
-                      <h2 className="text-lg font-semibold mb-2 truncate">{product.title}</h2>
-                      <div className="flex justify-between items-start">
-                        <div className="text-gray-600">
+                  
+                  <div className="py-4 flex flex-col justify-between">
+                    <div className=' flex flex-col gap-2'>
+                      <h2 className="font-sans text-foreground font-medium tracking-tight">{product.title}</h2>
+                      <div className="flex justify-between  items-start">
+                        <div className="text-gray-600 ">
                           {product.discount_rate !== null && product.discount_rate > 0 ? (
                             <>
-                              <div className="line-through text-sm">${(product.price / 100).toFixed(2)}</div>
+                              <div className="line-through text-sm pb-1">${(product.price / 100).toFixed(2)}</div>
                               <div className="text-base font-medium">${(product.discountLessValue ? (product.discountLessValue / 100).toFixed(2) : "0.00")}</div>
                             </>
                           ) : (
-                            <div className="text-base font-medium">${(product.price / 100).toFixed(2)}</div>
+                            <div className="text-base font-medium pb-1">${(product.price / 100).toFixed(2)}</div>
                           )}
                         </div>
-      
+                        
                         {product.discount_rate !== null && product.discount_rate > 0 && (
                           <div className="text-right">
-                            <div className="text-green-600 text-sm font-medium">
+                            <div className="text-foreground/60 pb-1 text-sm font-medium">
                               {(product.discount_rate / 100)}% off
                             </div>
-                            <div className="text-blue-600 text-sm">
-                              Save ${(product.discount ? product.discount : 0 / 100).toFixed(2)}
+                            <div className="text-foreground/60 text-sm">
+                              Save ${(product.discount ? product.discount / 100 : 0 / 100).toFixed(2)}
                             </div>
                           </div>
                         )}
@@ -429,12 +429,10 @@ export default function CategoryPage() {
           ))}
         </div>
 
+        {products.length === 0 && (
+          <div className="text-center text-gray-500 py-12">No products available at the moment</div>
+        )}
       </div>
-      {products.length === 0 && (
-        <div className="text-center text-gray-500 py-12">
-          No products available in {selectedCategory} category
-        </div>
-      )}
-    </div>
+      </div>
   );
 }

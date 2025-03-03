@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* styles/globals.css */
+:root {
+    --color-background: 249, 249, 249;
+    --gradient-background: #f9f9f9;
+    --color-foreground: 18, 18, 18;
+    --color-background-contrast: 185, 185, 185;
+    --color-shadow: 18, 18, 18;
+    --color-button: 18, 18, 18;
+    --color-button-text: 255, 255, 255;
+    --color-secondary-button: 249, 249, 249;
+    --color-secondary-button-text: 18, 18, 18;
+    --color-link: 18, 18, 18;
+    --color-badge-foreground: 18, 18, 18;
+    --color-badge-background: 249, 249, 249;
+    --color-badge-border: 18, 18, 18;
+    --payment-terms-background-color: rgb(249 249 249);
+  }

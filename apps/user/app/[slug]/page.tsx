@@ -49,13 +49,13 @@ export default function Page() {
   if (!homeData) return <div>No data found</div>;
 
   return (
-    <div className="w-full p-4 pt-24 sm:pt-28 md:pt-36  bg-ibisWhite flex justify-center text-customText items-center">
+    <div className="w-full p-4 pt-24 sm:pt-28 md:pt-36   flex justify-center text-foreground/75 items-center">
       <div className="flex flex-col w-full sm:w-4/5 md:w-3/4 lg:w-1/2 justify-center items-center gap-4 sm:gap-8">
-        <h1 className="text-white w-full text-xl sm:text-2xl text-center font-bold">
+        <h1 className="text-foreground w-full text-xl sm:text-2xl text-center ">
           {homeData.title}
         </h1>
 
-        <p className="w-full text-sm sm:text-base text-center font-medium">
+        <p className="w-full text-sm sm:text-base text-center">
           {homeData.first_para}
         </p>
 
@@ -80,11 +80,11 @@ export default function Page() {
           ))}
         </div>
 
-        <p className="w-full text-sm sm:text-base font-semibold hide-scrollbar text-center">
+        <p className="w-full text-sm sm:text-base  hide-scrollbar text-center">
           {homeData.second_para}
         </p>
 
-        <p className="w-full hide-scrollbar font-semibold text-center">
+        <p className="w-full hide-scrollbar  text-center">
           {homeData.third_para}
         </p>
       </div>

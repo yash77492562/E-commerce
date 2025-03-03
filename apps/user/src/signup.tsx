@@ -143,7 +143,7 @@ const SignUp = ({ onSignUp }: SignUpProps) => {
   ), [isCheckingUser, register, watch]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+    <div className=" max-h-[800px] h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>

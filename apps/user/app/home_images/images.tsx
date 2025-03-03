@@ -62,9 +62,9 @@ export const Page_Image = () => {
   }
 
   return (
-    <div className="w-full bg-customGray flex justify-center text-black py-10 px-4">
+    <div className="w-full  flex justify-center text-black py-10 px-4">
       {/* Desktop Layout */}
-      <div className="hidden lg:flex w-[80%]">
+      <div className="hidden lg:flex w-full lg:w-[90%]">
         <div className="w-1/2 gap-10"> 
           {homeData.slice(0, 4).map((item, index) => (
             <div key={item.id} className="p-5">
@@ -83,10 +83,10 @@ export const Page_Image = () => {
                   ) : (
                     <NoImagePlaceholder />
                   )}
-                  <div className="text-center text-customText p-2 w-[440px] font-semibold text-lg">
+                  <div className="text-center text-foreground p-2 w-[440px] font-semibold text-lg">
                     {item.title || 'Untitled Event'}
                   </div>
-                  <div className="text-center text-sm p-2 w-[440px] text-white">
+                  <div className="text-center text-xs p-2 w-[440px] text-foreground/75">
                     {item.first_para || 'No description available'}
                   </div>
                 </div>
@@ -112,10 +112,10 @@ export const Page_Image = () => {
                   ) : (
                     <NoImagePlaceholder />
                   )}
-                  <div className="text-center p-2 w-[446px] font-semibold text-xl text-customText">
+                  <div className="text-center p-2 w-[446px] font-semibold text-lg text-foreground ">
                     {item.title || 'Untitled Event'}
                   </div>
-                  <div className="text-center p-2 w-[446px] text-white">
+                  <div className="text-center text-xs p-2 w-[446px] text-foreground/75 ">
                     {item.first_para || 'No description available'}
                   </div>
                 </div>
@@ -139,18 +139,18 @@ export const Page_Image = () => {
                       alt={`Responsive Event ${index + 1}`}
                         loading='lazy'
                       width={index % 2 === 0 ? 440 : 446}
-                      height={index % 2 === 0 ? 294 : 694}
-                      className={`w-full max-w-[600px] ${
-                        index % 2 === 0 ? 'h-[294px]' : 'h-[694px]'
+                      height={index % 2 === 0 ? 294 : 550}
+                      className={` sm:w-[600px] sm:max-w-[600px] border ${
+                        index % 2 === 0 ? 'h-[294px]' : 'h-[450px] sm:h-[550px]'
                       } object-cover object-center`}
                     />
                   ) : (
                     <NoImagePlaceholder />
                   )}
-                  <div className="text-center p-4 w-full max-w-[600px] font-semibold text-lg text-customText">
+                  <div className="text-center p-4 w-full max-w-[600px] font-semibold text-lg text-foreground">
                     {item.title || 'Untitled Event'}
                   </div>
-                  <div className="text-center p-3 w-full max-w-[600px] text-white">
+                  <div className="text-center p-3  max-w-[600px]  text-xs text-foreground/75">
                     {item.first_para || 'No description available'}
                   </div>
                 </div>

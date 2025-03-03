@@ -108,10 +108,10 @@ export default function ProductImageGallery({
               }}
               className={`object-cover object-center border-2 cursor-pointer 
                 ${currentImageIndex === index 
-                  ? 'border-blue-500' 
+                  ? 'border' 
                   : 'border-transparent'
                 } 
-                ${index === 0 ? 'border-green-500' : ''}
+                ${index === 0 ? 'border' : ''}
                 hover:opacity-80 transition-opacity
               `}
               sizes="(max-width: 768px) 25vw, (max-width: 1200px) 20vw, 80px"

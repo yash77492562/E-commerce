@@ -90,26 +90,25 @@ const NavBar = () => {
   }, [hideNavbar]);
 
   const navLinks = [
-    { name: 'Shop', href: '/shop' },
-    { name: 'About Us', href: '/aboutUs' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Our Studio', href: '/studio' },
-    { name: 'Your Orders', href: '/order' },
-    { name: 'Profile', href: '/profile' }
+    { name: 'SHOP', href: '/shop' },
+    { name: 'ABOUT US', href: '/aboutUs' },
+    { name: 'CONTACT', href: '/contact' },
+    { name: 'STUDIO', href: '/studio' },
+    { name: 'ORDER', href: '/order' },
+    { name: 'PROFILE', href: '/profile' }
   ];
 
   const CartIcon = () => (
-    <div className="lg:border lg:border-white h-[80%] w-24 flex justify-center items-center relative">
+    <div className=" h-[80%] w-24 flex justify-center items-center relative">
       <Link href="/cart">
         <div className="relative">
           <ShoppingCart 
             className={`
-              h-8 w-8 
-              ${isTransparent ? 'text-white' : 'text-white'}
+              ${isTransparent ? 'text-foreground/75' : 'text-foreground/75'}
             `} 
           />
           {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+            <span className="absolute -top-2 -right-2 bg-black text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
               {cartCount}
             </span>
           )}
@@ -120,12 +119,10 @@ const NavBar = () => {
 
   return (
     <nav 
-      className={`
-        w-full px-12 py-4 fixed top-0 left-0 z-50 
-        transition-all duration-300 ease-in-out
+      className={`w-full
+        fixed top-0 left-0 z-50 
+        transition-all duration-300 ease-in-out  bg-background 
         ${isNavbarVisible ? 'translate-y-0' : '-translate-y-full'}
-        ${isTransparent ? 'bg-transparent' : 'bg-customText'}  
-        ${isTransparent ? '' : 'bg-opacity-60'}
       `}
       onMouseEnter={() => {
         if (scrollTimerRef.current) {
@@ -139,8 +136,9 @@ const NavBar = () => {
         }
       }}
     >
+      <div className='px-2 sm:px-12 py-4 '>
       {/* Large Screen Navigation */}
-      <div className="hidden lg:flex items-center justify-between">
+      <div className="hidden bg-background  lg:flex items-center justify-between">
         <Link href="/">
           <div className="flex-shrink-0">
             <Image 
@@ -159,8 +157,10 @@ const NavBar = () => {
               key={link.name} 
               href={link.href} 
               className={`
-                ${isTransparent ? 'text-white' : 'text-white'} 
-                text-lg font-semibold transition-colors
+                ${isTransparent ? 'text-foreground/75' : 'text-foreground/75'} 
+                tracking-wider
+                hover:underline
+                text-lg 
               `}
             >
               {link.name}
@@ -171,21 +171,21 @@ const NavBar = () => {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="lg:hidden h-[50px] flex items-center justify-between">
+      <div className="lg:hidden  h-[50px] flex items-center justify-between">
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className={`${isTransparent ? 'text-white' : 'text-white'}`}
+          className={`${isTransparent ? 'text-black' : 'text-black'}`}
         >
           <Menu className="h-6 w-6" />
         </button>
 
-        <Link href='/'>
+        <Link href='/' className='flex items-center h-full'>
           <Image 
             src="/images/IMG_2320.png" 
             alt="Logo" 
             width={50}
-            height={100}
-            className="h-8 w-auto absolute left-1/2 transform -translate-x-1/2"
+            height={50}
+            className="h-8  w-auto absolute left-1/2 transform -translate-x-1/2"
           />
         </Link>
 
@@ -206,7 +206,7 @@ const NavBar = () => {
                 <a 
                   key={link.name} 
                   href={link.href} 
-                  className="text-black text-2xl font-semibold"
+                  className="text-foreground "
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}
@@ -215,6 +215,7 @@ const NavBar = () => {
             </div>
           </div>
         )}
+      </div>
       </div>
     </nav>
   );

@@ -280,7 +280,7 @@ export default function OrderQueryPage() {
                 {/* Order header */}
                 <div className="flex flex-col sm:flex-row justify-between p-4 border-b mb-4">
                   <p className="font-semibold">Order ID: {order.id}</p>
-                  <p className="font-bold text-lg mt-2 sm:mt-0">Total: ${order.total}</p>
+                  <p className="font-bold text-lg mt-2 sm:mt-0">Total: ${Number(order.total)/100}</p>
                 </div>
 
                 {/* Order items */}
@@ -303,7 +303,7 @@ export default function OrderQueryPage() {
                         </div>
                       )}
                       <div className="flex flex-col justify-center">
-                        <p className="font-medium">${item.price}</p>
+                        <p className="font-medium">${Number(item.price)/100}</p>
                         <p className="font-medium">Qty: {item.quantity}</p>
                       </div>
                     </div>

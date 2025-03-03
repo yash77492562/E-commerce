@@ -1,9 +1,8 @@
 'use client'
 
-import React, { useState, useCallback ,useEffect} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import useCartStore from '../../store/cartStore';
 
 type ShippingDetails = {
   firstName: string;
@@ -15,6 +14,19 @@ type ShippingDetails = {
   state: string;
   city: string;
   postalCode: string;
+};
+
+type BuyNowProduct = {
+  id: string;
+  title: string;
+  price: number;
+  discountLessValue: number | null;
+  quantity: number;
+  product_images: Array<{
+    image_url: string;
+    image_key: string;
+  }>;
+  slug: string;
 };
 
 const StepIndicator = ({ currentStep }: { currentStep: number }) => {
@@ -35,8 +47,8 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => {
             }`}
           >
             {step}
-          </div>
-        ))}
+              </div>
+            ))}
       </div>
     </div>
   );
@@ -50,20 +62,20 @@ const ShippingDetailsStep = React.memo(({
   onInputChange: (name:string,value:string) => void;
 }) => {
   return (
-    <div className="grid  sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-4">
       {(Object.keys(shippingDetails) as Array<keyof ShippingDetails>).map((key) => (
         <input
           key={key}
           name={key}
           type="text"
           value={shippingDetails[key]}
-          onChange={(e) => onInputChange(key, e.target.value)}  // Updated
-          onBlur={(e) => onInputChange(key, e.target.value)}    // Updated
+          onChange={(e) => onInputChange(key, e.target.value)}
+          onBlur={(e) => onInputChange(key, e.target.value)}
           placeholder={key
             .replace(/([A-Z])/g, ' $1')
             .replace(/^./, (str) => str.toUpperCase())}
           className={`border p-2 ${
-            key === 'address' ? 'col-span-1 sm:col-span-2 w-full' : ''
+            key === 'address' ? 'col-span-2 w-full' : ''
           }`}
           required
         />
@@ -74,7 +86,7 @@ const ShippingDetailsStep = React.memo(({
 
 ShippingDetailsStep.displayName = 'ShippingDetailsStep';
 
-export default function OrderSummaryPage() {
+export default function BuyNowSummaryPage() {
   const [isClient, setIsClient] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [shippingDetails, setShippingDetails] = useState<ShippingDetails>({
@@ -89,19 +101,17 @@ export default function OrderSummaryPage() {
     postalCode: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('');
-
-  const { 
-    cartProducts, 
-    removeFromCart, 
-    calculateSubTotal,
-    clearCart,
-    fetchCartProducts
-  } = useCartStore();
+  const [buyNowProduct, setBuyNowProduct] = useState<BuyNowProduct | null>(null);
 
   useEffect(() => {
     setIsClient(true);
-    fetchCartProducts();
-  }, [fetchCartProducts]);
+    // Load buy now product from session storage
+    const storedProduct = sessionStorage.getItem('buyNowProduct');
+    if (storedProduct) {
+      setBuyNowProduct(JSON.parse(storedProduct));
+    }
+  }, []);
+
   const TAX = 0;
   const SHIPPING = 0;
 
@@ -111,7 +121,16 @@ export default function OrderSummaryPage() {
       [name]: value.trim()
     }));
   }, []);
-// Skip hydration mismatch by not rendering until client-side
+
+  // Calculate total
+  const calculateTotal = () => {
+    if (!buyNowProduct) return 0;
+    
+    const productPrice = buyNowProduct.discountLessValue || buyNowProduct.price;
+    return productPrice * buyNowProduct.quantity;
+  };
+
+  // Skip hydration mismatch by not rendering until client-side
   if (!isClient) {
     return (
       <div className="w-full pt-24 sm:pt-28 md:pt-32 h-screen flex items-center justify-center">
@@ -119,84 +138,78 @@ export default function OrderSummaryPage() {
       </div>
     );
   }
+
+  // Redirect if no buy now product
+  if (isClient && !buyNowProduct) {
+    return (
+      <div className="w-full pt-24 sm:pt-28 md:pt-32 h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p>No product selected for purchase.</p>
+          <Link 
+            href="/shop" 
+            className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Continue Shopping
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const OrderSummaryStep = () => {
-    const products = cartProducts || [];
-    const subTotal = calculateSubTotal();
-    const total = subTotal + TAX + SHIPPING;
+    const product = buyNowProduct!;
+    const total = calculateTotal();
 
     return (
       <div className="flex flex-col space-y-4">
-        {products.length === 0 ? (
-          <div className="text-center">
-            <p>Your cart is empty.</p>
-            <Link 
-              href="/shop" 
-              className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Continue Shopping
-            </Link>
-          </div>
-        ) : (
-          <>
-            {products.map((product) => (
-              <div 
-                key={product.id} 
-                className="flex flex-col gap-2 sm:gap-0 sm:flex-row sm:justify-between border-b pb-4"
-              >
-                {product.product_images && product.product_images.length > 0 ? (
-                  <div className='flex flex-col sm:flex-row gap-3 w-full sm:w-[85%]  '>
-                    <Image
-                      loader={() => product.product_images[0]?.image_url || ''}
-                      src={product.product_images?.[0]?.image_url ?? '/placeholder-image.jpg'}
-                      alt={product.title}
-                      loading='lazy'
-                      width={100}
-                      height={100}
-                      className="object-cover object-center mr-4 w-[150px] h-[200px]"
-                    />
-                    <h3 className="text-lg font-foreground">{product.title}</h3>
-                  </div>
-                ) : (
-                  <div className="w-[100px] h-[100px] bg-gray-200 flex items-center justify-center mr-4">
-                    No Image
-                  </div>
-                )}
-                
-                <div className="flex-col h-full justify-around sm:items-center  flex gap-2">
-                  <p className='font-foreground/75'>
-                    ${((product.discountLessValue || product.price) / 100).toFixed(2)}
-                  </p>
-                  <p className='font-foreground/75'>Qty: {product.quantity}</p>
-                  <button 
-                    onClick={() => removeFromCart(product.id)}
-                    className="text-gray-500  hover:text-red-700"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
-            
-            <div className="mt-6 space-y-2">
-              <p className="flex justify-between">
-                <span>Subtotal:</span>
-                <span>${(subTotal/100).toFixed(2)}</span>
-              </p>
-              <p className="flex justify-between">
-                <span>Tax:</span>
-                <span>${TAX.toFixed(2)}</span>
-              </p>
-              <p className="flex font-medium justify-between">
-                <span>Shipping:</span>
-                <span>${SHIPPING.toFixed(2)}</span>
-              </p>
-              <p className="flex justify-between font-semibold text-xl">
-                <span>Total:</span>
-                <span>${(total/100).toFixed(2)}</span>
-              </p>
+        <h2 className="text-xl font-bold mb-4">Buy Now - Order Summary</h2>
+        
+        <div key={product.id} className="flex justify-between border-b pb-4">
+          {product.product_images && product.product_images.length > 0 ? (
+            <div className='flex gap-3'>
+              <Image
+                loader={() => product.product_images[0]?.image_url || ''}
+                src={product.product_images?.[0]?.image_url ?? '/placeholder-image.jpg'}
+                alt={product.title}
+                loading='lazy'
+                width={100}
+                height={100}
+                className="object-cover mr-4"
+              />
+              <h3 className="text-lg font-semibold">{product.title}</h3>
             </div>
-          </>
-        )}
+          ) : (
+            <div className="w-[100px] h-[100px] bg-gray-200 flex items-center justify-center mr-4">
+              No Image
+            </div>
+          )}
+          
+          <div className="flex-col h-full flex gap-2">
+            <p className='font-semibold'>
+              ${((product.discountLessValue || product.price) / 100).toFixed(2)}
+            </p>
+            <p className='font-semibold'>Qty: {product.quantity}</p>
+          </div>
+        </div>
+        
+        <div className="mt-6 space-y-2">
+          <p className="flex justify-between">
+            <span>Subtotal:</span>
+            <span>${(total/100).toFixed(2)}</span>
+          </p>
+          <p className="flex justify-between">
+            <span>Tax:</span>
+            <span>${TAX.toFixed(2)}</span>
+          </p>
+          <p className="flex font-semibold justify-between">
+            <span>Shipping:</span>
+            <span>${SHIPPING.toFixed(2)}</span>
+          </p>
+          <p className="flex justify-between font-bold text-xl">
+            <span>Total:</span>
+            <span>${(total/100).toFixed(2)}</span>
+          </p>
+        </div>
       </div>
     );
   };
@@ -246,18 +259,17 @@ export default function OrderSummaryPage() {
   const ConfirmationStep = React.memo(() => {
     const handlePlaceOrder = async () => {
       try {
-        // Validate data before sending
-        if (!cartProducts.length) {
-          console.error('No products in cart');
+        if (!buyNowProduct) {
+          console.error('No product selected for purchase');
           return;
         }
     
         const orderPayload = {
-          cartProducts: cartProducts.map(product => ({
-            id: product.id,
-            quantity: product.quantity,
-            price: product.discountLessValue || product.price
-          })),
+          products: [{
+            id: buyNowProduct.id,
+            quantity: buyNowProduct.quantity,
+            price: buyNowProduct.discountLessValue || buyNowProduct.price
+          }],
           shippingDetails: {
             firstName: shippingDetails.firstName,
             lastName: shippingDetails.lastName,
@@ -270,12 +282,12 @@ export default function OrderSummaryPage() {
             postalCode: shippingDetails.postalCode
           },
           paymentMethod,
-          subtotal: calculateSubTotal(),
+          subtotal: calculateTotal(),
           tax: TAX,
           shipping: SHIPPING,
-          total: calculateSubTotal() + TAX + SHIPPING
+          total: calculateTotal() + TAX + SHIPPING,
+          isBuyNow: true
         };
-    
     
         const orderResponse = await fetch('/api/order_summary', {
           method: 'POST',
@@ -306,25 +318,26 @@ export default function OrderSummaryPage() {
                 address: shippingDetails.address,
                 phone: shippingDetails.phone
               },
-              products: cartProducts.map(product => ({
-                title: product.title,
-                quantity: product.quantity,
-                price: product.price,
-                discountLessValue: product.discountLessValue,
-                imageUrl: product.product_images?.[0]?.image_url || '',
-                imageKey:product.product_images?.[0]?.image_key || ''
-              })),
+              products: [{
+                title: buyNowProduct.title,
+                quantity: buyNowProduct.quantity,
+                price: buyNowProduct.price,
+                discountLessValue: buyNowProduct.discountLessValue,
+                imageUrl: buyNowProduct.product_images?.[0]?.image_url || '',
+                imageKey: buyNowProduct.product_images?.[0]?.image_key || ''
+              }],
               totals: {
-                subtotal: calculateSubTotal(),
+                subtotal: calculateTotal(),
                 tax: TAX,
                 shipping: SHIPPING,
-                total: calculateSubTotal() + TAX + SHIPPING
+                total: calculateTotal() + TAX + SHIPPING
               }
             })
           });
     
           if (emailResponse.ok) {
-            clearCart();
+            // Clear buy now data from session storage
+            sessionStorage.removeItem('buyNowProduct');
           }
         }
       } catch (error) {
@@ -341,10 +354,10 @@ export default function OrderSummaryPage() {
         <p>Thank you for your purchase.</p>
         <Link 
           href="/shop" 
-          className="mt-4 inline-block  text-customText px-4 py-2 rounded"
+          className="mt-4 inline-block text-customText px-4 py-2 rounded"
           onClick={handlePlaceOrder}
         >
-          <h2 className="text-2xl font-bold   mb-4"> 
+          <h2 className="text-2xl font-bold mb-4"> 
             Continue Shopping
           </h2>
         </Link>
@@ -353,8 +366,6 @@ export default function OrderSummaryPage() {
   });
 
   ConfirmationStep.displayName = 'ConfirmationStep';
-
-  
 
   const renderCurrentStep = () => {
     switch(currentStep) {
@@ -376,9 +387,8 @@ export default function OrderSummaryPage() {
     }
   };
 
-  
   return (
-    <div className='w-full pt-24 sm:pt-28 md:pt-32 max-h-[800px] h-screen flex items-center justify-center'>
+    <div className='w-full pt-24 sm:pt-28 md:pt-32 h-screen flex items-center justify-center'>
       <div className="w-full md:w-[90%] lg:w-[70%] h-full mx-auto px-4 gap-4 md:gap-0 pb-8 flex flex-col md:flex-row">
         <div className="w-full md:w-[30%] flex md:flex-col overflow-x-auto hide-scrollbar md:overscroll-x-none gap-6 justify-evenly h-[10%] md:h-full pr-4">
           <StepIndicator currentStep={currentStep} />
@@ -396,7 +406,7 @@ export default function OrderSummaryPage() {
                 Back
               </button>
             )}
-            {currentStep < 3 && cartProducts?.length > 0 && (
+            {currentStep < 3 && buyNowProduct && (
               <button
                 onClick={() => setCurrentStep(prev => prev + 1)}
                 className="ml-auto bg-blue-500 text-white px-4 py-2 rounded"
@@ -408,6 +418,5 @@ export default function OrderSummaryPage() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>)
 }

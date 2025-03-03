@@ -27,24 +27,26 @@ type Product = {
   uploaded_at: string;
   product_images: ProductImage[];
 };
+
 // Login prompt component
 const LoginPrompt = () => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-8 rounded-lg max-w-md w-full mx-4">
-      <h2 className="text-2xl font-bold mb-4">Login Required</h2>
-      <p className="text-gray-600 mb-6">
+    <div className="bg-background p-8 max-w-md w-full mx-4">
+      <h2 className="text-xl text-foreground font-bold mb-4">Login Required</h2>
+      <p className="text-gray-800 mb-6">
         To add items to your cart and proceed with purchase, please login first. 
         From the cart, you can review your items and proceed to payment.
       </p>
       <Link 
         href="/auth/login"
-        className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg text-center block hover:bg-blue-700 transition-colors"
+        className="w-full border bg-black text-white py-3 px-6 text-center block transition-colors"
       >
-        Login to Continue
+        Login To Continue
       </Link>
     </div>
   </div>
 );
+
 export default function ProductDetailPage() {
   const params = useParams();
   const [slug, setSlug] = useState<string | null>(null);
@@ -54,7 +56,8 @@ export default function ProductDetailPage() {
   const [isAdded, setIsAdded] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-
+  const [quantity, setQuantity] = useState(1);
+  const [priceLoading, setPriceLoading] = useState(false);
 
   useEffect(() => {
     const slugValue = Array.isArray(params.slug) ? params.slug[0] : params.slug;
@@ -97,6 +100,16 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity < 1) return;
+    setPriceLoading(true);
+    setQuantity(newQuantity);
+    // Simulate price calculation delay
+    setTimeout(() => {
+      setPriceLoading(false);
+    }, 500);
+  };
+
   const handleAddToCart = async () => {
     if (!product) {
       alert("Product not available.");
@@ -116,7 +129,10 @@ export default function ProductDetailPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId: product.id }),
+        body: JSON.stringify({ 
+          productId: product.id,
+          quantity: quantity
+        }),
       });
 
       if (response.ok) {
@@ -131,14 +147,51 @@ export default function ProductDetailPage() {
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("An error occurred. Please try again.");
-    }finally{
-      setIsAddingToCart(false)
+    } finally {
+      setIsAddingToCart(false);
     }
-  }
+  };
+
+  const handleBuyNow = async () => {
+    if (!product) {
+      alert("Product not available.");
+      return;
+    }  
+    const isLoggedIn = await checkUserLogin()
+    
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
+    try {
+      // First add to cart
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          productId: product.id,
+          quantity: quantity
+        }),
+      });
+
+      if (response.ok) {
+        // Navigate to order summary page
+        window.location.href = "/order_summary";
+      } else {
+        toast.error("Failed to proceed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during buy now:", error);
+      toast.error("An error occurred. Please try again.");
+    }
+  };
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center bg-ibisWhite min-h-screen">
+      <div className="container mx-auto px-4 py-8 text-center min-h-screen">
         <div className="animate-pulse text-gray-600 font-semibold">
           Loading product details...
         </div>
@@ -148,7 +201,7 @@ export default function ProductDetailPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center bg-ibisWhite min-h-screen">
+      <div className="container mx-auto px-4 py-8 text-center min-h-screen">
         <div className="text-red-600 font-semibold text-xl">
           {error}
         </div>
@@ -158,7 +211,7 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center bg-ibisWhite min-h-screen">
+      <div className="container mx-auto px-4 py-8 text-center min-h-screen">
         <div className="text-gray-600 font-semibold text-xl">
           Product not found
         </div>
@@ -166,15 +219,20 @@ export default function ProductDetailPage() {
     );
   }
 
+  // Calculate total price based on quantity
+  const regularPrice = product.price * quantity;
+  const discountedPrice = product.discountLessValue ? product.discountLessValue * quantity : null;
+  const finalPrice = discountedPrice || regularPrice;
+
   return (<div className='flex w-full justify-center items-center'>
     {showLoginPrompt && <LoginPrompt />}
-    <div className="w-full md:container bg-ibisWhite px-4 pt-24 sm:pt-28 md:pt-36 py-8 min-h-screen">
-      <div className="flex items-center space-x-2 text-sm text-gray-600 mb-8">
-        <Link href="/shop" className="hover:text-blue-600 text-lg font-medium transition-colors">
+    <div className="w-full md:container px-4 pt-24 sm:pt-28 md:pt-36 py-8 min-h-screen">
+      <div className="flex items-center space-x-2 text-sm text-foreground mb-8">
+        <Link href="/shop" className="hover:underline font-sans text-foreground font-bold tracking-tight transition-colors">
           Shop
         </Link>
-        <span className="text-gray-400">{'/'}</span>
-        <span className="font-medium text-gray-800">{product.title}</span>
+        <span className="font-bold text-xl">{'/'}</span>
+        <span className="font-sans text-foreground font-bold tracking-tight">{product.title}</span>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-12">
@@ -206,49 +264,80 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="space-y-8 p-4">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 tracking-tight">
+          <h1 className="font-sans text-foreground font-bold tracking-tight">
             {product.title || 'Untitled Product'}
           </h1>
 
           <div className="space-y-4">
-            {(product.discount_rate ?? 0) > 0 && (
-              <div className="inline-block bg-red-50 text-red-600 px-4 py-1 rounded-full text-sm font-semibold">
-                {(product.discount_rate ?? 0) / 100}% OFF
-              </div>
-            )}
             
-            <div className="flex  space-y-2">
-              {(product.discount_rate ?? 0) > 0 && (
-                <span className="text-xl text-gray-400 line-through">
-                  ${(product.price / 100).toFixed(2)}
-                </span>
+            <div className="flex items-center space-x-2">
+              {priceLoading ? (
+                <span className="text-xl text-foreground/75 animate-pulse">Calculating...</span>
+              ) : (
+                <>
+                  {(product.discount_rate ?? 0) > 0 && (
+                    <span className="text-xl text-foreground/75 line-through">
+                      ${(regularPrice / 100).toFixed(2)}
+                    </span>
+                  )}
+                  <div className="h-full flex items-center">
+                    <span className="text-xl text-foreground">
+                      ${(finalPrice / 100).toFixed(2)}
+                    </span>
+                  </div>
+                  {(product.discount_rate ?? 0) > 0 && (
+                    <div className="inline-block bg-black text-white px-4 py-1 rounded-full text-sm font-semibold">
+                      Sale 
+                    </div>
+                  )}
+                </>
               )}
-              <div className="flex items-baseline space-x-2">
-                <span className="text-3xl font-bold text-gray-900">
-                  ${(((product?.discount_rate ?? 0) > 0 ? product?.discountLessValue ?? product?.price ?? 0 : product?.price ?? 0) / 100).toFixed(2)}
-                </span>
-              </div>
             </div>
           </div>
 
-          <div className="prose prose-lg text-gray-600 max-w-none">
+          <div className="prose prose-lg text-foreground/75 whitespace-pre-wrap max-w-none">
             {product.description || 'No description available'}
           </div>
 
-          <div className="pt-6">
+          <div className="pt-2 mb-4">
+            <label htmlFor="quantity" className="block text-sm font-medium text-foreground/75 mb-2">
+              Quantity
+            </label>
+            <div className="flex items-center w-1/3 border border-black  overflow-hidden">
+              <button
+                onClick={() => handleQuantityChange(quantity - 1)}
+                className="px-3 py-2  font-bold text-lg"
+                disabled={quantity <= 1}
+              >
+                -
+              </button>
+              <input
+                id="quantity"
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                className="w-full text-center bg-background"
+              />
+              <button
+                onClick={() => handleQuantityChange(quantity + 1)}
+                className="px-3 py-2  font-bold text-lg"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-2 space-y-4">
             <button
-              className={`w-full md:w-2/3 px-8 py-4 rounded-lg ${
-                isAdded 
-                  ? "bg-green-500 hover:bg-green-600" 
-                  : "bg-blue-600 hover:bg-blue-700"
-              } text-white transition-all duration-200 font-medium text-lg shadow-sm`}
+              className={`w-full md:w-2/3 px-8 py-4 border border-black text-black transition-all duration-200 text-lg shadow-sm `}
               onClick={handleAddToCart}
               disabled={isAdded || isAddingToCart}
             >
               {isAddingToCart ? (
                 <div className="flex items-center justify-center">
                   <svg 
-                    className="animate-spin h-5 w-5 text-white mr-2" 
+                    className="animate-spin h-5 w-5 text-current mr-2" 
                     xmlns="http://www.w3.org/2000/svg" 
                     fill="none" 
                     viewBox="0 0 24 24"
@@ -274,6 +363,14 @@ export default function ProductDetailPage() {
               ) : (
                 "Add to Cart"
               )}
+            </button>
+            
+            <button
+              className={`w-full md:w-2/3 px-8 py-4 bg-black text-white transition-all duration-200 text-lg shadow-sm `}
+              onClick={handleBuyNow}
+              disabled={isAddingToCart}
+            >
+              Buy it now
             </button>
           </div>
         </div>

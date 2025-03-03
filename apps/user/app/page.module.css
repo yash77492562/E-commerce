@@ -1,10 +1,10 @@
 .page {
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+  --gray-rgb: var(--color-foreground);
+  --gray-alpha-200: rgba(var(--color-foreground), 0.08);
+  --gray-alpha-100: rgba(var(--color-foreground), 0.05);
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
+  --button-primary-hover: rgba(var(--color-foreground), 0.9);
+  --button-secondary-hover: rgba(var(--color-background-contrast), 0.1);
 
   display: grid;
   grid-template-rows: 20px 1fr 20px;
@@ -14,17 +14,6 @@
   padding: 80px;
   gap: 64px;
   font-synthesis: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  .page {
-    --gray-rgb: 255, 255, 255;
-    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
-    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-  }
 }
 
 .main {
@@ -80,8 +69,8 @@
 }
 
 a.primary {
-  background: var(--foreground);
-  color: var(--background);
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
   gap: 8px;
 }
 

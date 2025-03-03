@@ -1,5 +1,3 @@
-const { before } = require('node:test');
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -12,30 +10,55 @@ module.exports = {
   theme: {
     extend: {
       fontSize: {
-        // Custom font size using the calc expression
         dynamicHeading: 'calc((var(--heading-1-size-value) - 1) * 1.2vw + 1rem)',
       },
       colors: {
+        background: 'rgb(var(--color-background),<alpha-value>)',
+        foreground: 'rgb(var(--color-foreground),<alpha-value>)',
+        'background-contrast': 'rgb(var(--color-background-contrast),<alpha-value>)',
+        shadow: 'rgb(var(--color-shadow))',
+        button: {
+          DEFAULT: 'rgb(var(--color-button))',
+          text: 'rgb(var(--color-button-text))',
+        },
+        'secondary-button': {
+          DEFAULT: 'rgb(var(--color-secondary-button))',
+          text: 'rgb(var(--color-secondary-button-text))',
+        },
+        link: 'rgb(var(--color-link))',
+        badge: {
+          foreground: 'rgb(var(--color-badge-foreground))',
+          background: 'rgb(var(--color-badge-background))',
+          border: 'rgb(var(--color-badge-border))',
+        },
+        'payment-terms': {
+          background: 'rgb(249 249 249)',
+        },
+        // Additional colors merged into the same colors object
         ibisWhite: '#F2ECE6',
-        customGray: '#D3CCC7',
-        customText: '#7C8280',
+        customGray: '#F8FAFC',
+        purewhite: '#FFFFFF',
+        lightgray: '#F1F5F9',
+        main: '#1E293B',
+        lessMain: '#64748B',
+        heading: '#OF172A',
+        clickable: '#7C8280',
         customBeige: '#B5AA9C',
         lightCran: '#E0FFFF',
-        customText1: '#7D8281',
+        customText1: '#7D8281'
       },
       backgroundImage: {
+        'gradient-background': 'var(--gradient-background)',
         'marvel': "url('/images/IMG_2332.JPG')",
-        'home_bg': "url('/images/IMG_2315.JPG')"
+        'home_bg': "url('/images/121.webp')",
+        'backgroundImage':"url('/images/IMG_6054.JPG')"
       },
-      content: {
-        before: 'attr(before)',
-      },
+      // Moved content outside of theme.extend
       animation: {
         scanner: 'scanner 1.5s ease-in-out infinite',
         wiggle: 'wiggle 1s ease-in-out infinite',
         breatheFire: 'breatheFire 2s ease-in-out infinite',
         fideIn: 'fadeIn 1.5s ease-in-out',
-        // Add new animations for profile shapes
         moveAround: 'moveAround 15s linear infinite',
         moveAndSpin: 'moveAndSpin 20s linear infinite',
       },
@@ -69,7 +92,6 @@ module.exports = {
             transform: 'translateY(0)',
           }
         },
-        // Add new keyframes for profile shapes
         moveAround: {
           '0%': {
             transform: 'translate(0, 0)',

@@ -44,8 +44,8 @@ export default function ProductCard() {
 
 
   return (
-    <div className="w-full pt-24 sm:pt-28 md:pt-36 lg:w-[80%] mx-auto bg-ibisWhite min-h-screen overflow-y-auto hide-scrollbar sm:p-10 md:p-14 lg:p-20 space-y-4">
-      <div className='font-bold text-xl mb-4'>Shopping Bucket</div>
+    <div className="w-full pt-24 sm:pt-28 md:pt-36 lg:w-[80%] mx-auto  min-h-screen overflow-y-auto hide-scrollbar sm:p-10 md:p-14 lg:p-20 space-y-4">
+      <div className='sm:font-bold text-xl mb-4'>Shopping Bucket</div>
       
       {Array.isArray(cartProducts) && cartProducts.length > 0 ? (
         <>
@@ -63,17 +63,17 @@ export default function ProductCard() {
 
               <Link
                 href={`/shop/product/${product?.slug || ''}`}
-                className="flex items-start sm:items-center border border-r-0 border-l-0 border-t-0 rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="flex flex-col  w-full sm:flex-row items-start sm:items-center border border-r-0 border-l-0 border-t-0 rounded-lg p-4 hover:shadow-md transition-shadow"
               >
                 {product?.product_images && product.product_images.length > 0 ? (
-                  <div className="w-[100px] h-[100px] mr-4 flex-shrink-0">
+                  <div className="w-[150px] h-[200px] mr-4 sm:flex-shrink-0">
                     <Image
                       loader={() => product.product_images[0]?.image_url || ''}
                       src={product.product_images[0]?.image_url || ''}
                       alt={product.title || ''}
                       loading='lazy'
-                      width={100}
-                      height={100}
+                      width={300}
+                      height={500}
                       className="object-cover w-full h-full"
                     />
                   </div>
@@ -84,22 +84,22 @@ export default function ProductCard() {
                 )}
     
                 {/* Content container */}
-                <div className="flex-grow h-full ">
+                <div className="flex-grow  w-full  h-full ">
                   {/* Mobile layout (below sm breakpoint) */}
-                  <div className="flex  sm:hidden  h-full w-full">
-                    <div className="flex   flex-col gap-8 justify-between items-start w-full">
-                      <h2 className="text-base font-semibold mb-2 truncate flex-1 mr-2">{product.title}</h2>
-                      <div >
+                  <div className="flex  flex-col sm:flex-row sm:hidden  h-full w-full">
+                    <div className="flex   flex-col gap-1 sm:gap-8 justify-between items-start w-full">
+                      <h2 className="text-base w-full font-semibold mb-2 truncate flex-1 mr-2">{product.title}</h2>
+                      <div className='border border-black '>
                         <button 
                           onClick={(e) => {
                             e.preventDefault();
                             updateQuantity(product.id, product.quantity - 1);
                           }}
-                          className="p-2 hover:bg-gray-100 rounded-l-full"
+                          className="p-2  hover:bg-gray-100 rounded-l-full"
                         >
                           <Minus size={16} />
                         </button>
-                        <span className="px-4 flex-grow text-center">{product.quantity}</span>
+                        <span className="px-4  flex-grow text-center">{product.quantity}</span>
                         <button 
                           onClick={(e) => {
                             e.preventDefault();
@@ -115,11 +115,11 @@ export default function ProductCard() {
                       <div className="text-right">
                         {product.discount_rate !== null && product.discount ? (
                           <div className="flex flex-col">
-                            <span className="line-through text-gray-600">${product.price.toFixed(2)}</span>
-                            <span className="font-semibold">${product.discountLessValue?.toFixed(2)}</span>
+                            {/* <span className="line-through text-gray-600">${(product.price/100).toFixed(2)}</span> */}
+                            <span className=" font-foreground/75">${((product.discountLessValue || 0)/100).toFixed(2)}</span>
                           </div>
                         ) : (
-                          <p>${product.price.toFixed(2)}</p>
+                          <p>${(product.price/100).toFixed(2)}</p>
                         )}
                       </div>
                     </div>
@@ -133,7 +133,7 @@ export default function ProductCard() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center border rounded-full w-[120px]">
+                    <div className="flex items-center border  w-[120px]">
                       <button 
                         onClick={(e) => {
                           e.preventDefault();
@@ -160,19 +160,19 @@ export default function ProductCard() {
                         product.discount ? (
                           <div className='flex flex-col sm:block'>
                             <p className="text-gray-600">
-                              <span className="block md:inline mr-0 line-through md:mr-4">
-                                ${product.price.toFixed(2)}
-                              </span>
+                              {/* <span className="block md:inline mr-0 line-through md:mr-4">
+                                ${(product.price/100).toFixed(2)}
+                              </span> */}
                               <span className="block sm:inline font-semibold">
                                 ${product.discountLessValue?.toFixed(2)}
                               </span>
                             </p>
                           </div>
                         ) : (
-                          <p>${product.price.toFixed(2)}</p>
+                          <p>${(product.price/100).toFixed(2)}</p>
                         )
                       ) : (
-                        <p>${product.price.toFixed(2)}</p>
+                        <p>${(product.price/100).toFixed(2)}</p>
                       )}
                     </div>
                   </div>
@@ -186,7 +186,7 @@ export default function ProductCard() {
             <div className="w-full sm:w-3/5 border p-6 rounded-lg">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Subtotal:</h3>
-                <h3 className="text-xl font-semibold">${calculateSubTotal().toFixed(2)}</h3>
+                <h3 className="text-xl font-semibold">${(calculateSubTotal()/100).toFixed(2)}</h3>
               </div>
               <Link 
                 href="/order_summary" 

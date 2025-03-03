@@ -3,8 +3,9 @@
   "private": true,
   "scripts": {
     "test": "jest",
+    "start": "dotenv -e .env.production -- turbo run start:user start:admin",
     "test:watch": "jest --watch",
-    "build": "dotenv -e .env.production turbo run build",
+    "build": "dotenv -e .env.production -- turbo run build",
     "dev": "dotenv -e .env.local turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

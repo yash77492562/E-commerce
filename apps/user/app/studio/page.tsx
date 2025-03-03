@@ -3,10 +3,10 @@ import Image from 'next/image';
 
 const StudioPage = () => {
   return (
-    <div className="min-h-screen bg-ibisWhite">
+    <div className="">
       
       {/* Hero Section */}
-      <section id="home" className="relative h-screen">
+      <section id="home" className="relative h-screen max-h-[800px]">
         <div className="absolute inset-0">
           <Image
             src="/images/3.webp"

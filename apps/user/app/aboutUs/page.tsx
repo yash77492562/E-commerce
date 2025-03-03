@@ -112,11 +112,11 @@ export default function AboutUs() {
   }, []);
 
   // 13. Main Render
-  if (isLoading) return <div className="  pt-24 sm:pt-28 md:pt-36 bg-ibisWhite">Loading...</div>;
-  if (!aboutData) return <div className="  pt-24 sm:pt-28 md:pt-36 bg-ibisWhite">No data found</div>;
+  if (isLoading) return <div className="  pt-24 sm:pt-28 md:pt-36 ">Loading...</div>;
+  if (!aboutData) return <div className="  pt-24 sm:pt-28 md:pt-36 ">No data found</div>;
 
   return (
-    <div className="w-full  p-4  pt-24 sm:pt-28 md:pt-36 bg-ibisWhite text-customText1">
+    <div className="w-full  p-4  pt-24 sm:pt-28 md:pt-36 text-customText1">
       <div className="flex flex-col   flex-wrap sm:gap-6 md:gap-0  sm:flex-row   w-full">
         {/* Left Column - Only render if any content exists */}
         {(aboutData.first_para || aboutData.second_para || aboutData.third_para || aboutData.heading) && (
@@ -164,7 +164,7 @@ export default function AboutUs() {
         {/* Right Column - Only render if rightCorner image or four_para exists */}
         {(images.rightCorner?.image_url || aboutData.four_para) && (
           <div className="w-full  md:mt-6  lg:w-1/3 lg:mt-0  mb-8 sm:mb-0">
-            <div className=" lg:max-w-[400px]  md:w-full md:flex md:justify-center md:mb-0 md:items-center lg:block mx-auto lg:mx-0">
+            <div className=" lg:max-w-[400px]  md:w-full sm:w-[70%] md:flex md:justify-center md:mb-0 md:items-center lg:block mx-auto lg:mx-0">
               {images.rightCorner?.image_url && renderImageSection(
                 images.rightCorner,
                 'w-full md:w-1/2 lg:w-full h-[400px] sm:h-[600px]'

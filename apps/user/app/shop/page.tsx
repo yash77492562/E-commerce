@@ -190,8 +190,8 @@ export default function ShopPage() {
                     className={cn(
                       "flex items-center justify-between px-3 py-2 rounded-md transition-colors duration-300",
                       selectedCategory === 'All'
-                        ? "bg-blue-500 text-white font-semibold"
-                        : "hover:bg-gray-100 text-gray-700"
+                        ? " text-foreground font-bold"
+                        : ""
                     )}
                     onClick={() => handleCategoryChange('All')}
                   >
@@ -210,7 +210,7 @@ export default function ShopPage() {
                     "flex items-center justify-between px-3 py-2 rounded-md transition-colors duration-300",
                     selectedCategory === category.name && !selectedSubCategory
                       ? "bg-blue-100 text-blue-600 font-semibold"
-                      : "hover:bg-gray-100 text-gray-700",
+                      : "hover:bg-gray-100 text-foreground/80",
                     hasSubcategories ? "" : "cursor-pointer"
                   )}
                   onClick={() => !hasSubcategories && handleCategoryChange(category.name)}
@@ -227,8 +227,8 @@ export default function ShopPage() {
                         className={cn(
                           "flex items-center justify-between px-3 py-2 rounded-md transition-colors duration-300 cursor-pointer",
                           selectedCategory === category.name && selectedSubCategory === subCategory
-                            ? "text-green-500 bg-blue-100 font-semibold"
-                            : "hover:bg-gray-100 text-gray-700"
+                            ? "text-foreground  font-bold"
+                            : "hover:bg-gray-100 text-foreground/80"
                         )}
                         onClick={() => handleCategoryChange(category.name, subCategory)}
                       >
@@ -336,18 +336,18 @@ export default function ShopPage() {
   if (error) return <div className="container mx-auto px-4 py-8 text-center text-red-500">{error}</div>;
 
   return (
-    <div className="w-full bg-ibisWhite">
-      <div className="bg-marvel h-[70vh] text-white w-full bg-cover bg-center flex justify-center items-center">
+    <div className="w-full ">
+      <div className="bg-backgroundImage min-h-[500px] h-[70vh] max-h-[800px] text-white w-full bg-cover bg-center flex justify-center items-center">
         <div className="flex flex-col gap-4 justify-center items-center">
           <h1 className="font-semibold  text-4xl md:text-5xl">Welcome To</h1>
           <h1 className="font-semibold  text-4xl md:text-5xl">Our Gallery</h1>
-          <div className="relative w-[500px] mt-5 mx-auto">
+          <div className="relative w-[98%] sm:w-[500px] mt-11 mx-auto">
             <input
               type="text"
               placeholder="Search"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="w-full h-[60px] pl-10 pr-4 text-white border bg-transparent focus:outline-none"
+              className="w-full h-[60px] pl-10 pr-4 text-black border bg-transparent focus:outline-none"
             />
             <Search className="absolute top-1/2 left-3 font-extrabold transform -translate-y-1/2 text-white" />
             
@@ -391,15 +391,15 @@ export default function ShopPage() {
         </div>
       </div>
       
-      <div className="w-full h-screen md:grid md:grid-cols-[3fr_7fr] lg:grid-cols-[2fr_8fr] min-h-screen pt-10 px-4">
+      <div className="w-full max-h-[800px] overflow-auto h-screen  md:grid md:grid-cols-[3fr_7fr] lg:grid-cols-[2fr_8fr]  pt-10 px-4">
         {/* Categories section */}
         <div className="mb-8 md:h-full md:overflow-y-auto hide-scrollbar">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Categories</h2>
+          <h2 className="text-xl font-bold mb-4 ">Categories</h2>
           {renderCategories()}
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 h-full overflow-y-auto hide-scrollbar md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-auto">
+        <div className="grid  grid-cols-2 sm:grid-cols-3 h-full overflow-y-auto hide-scrollbar md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-auto">
           {products.map((product: Product) => (
             <div key={product.id} className="relative h-full">
               <Link href={`/shop/product/${product.slug}`} className="group h-full">
@@ -424,27 +424,27 @@ export default function ShopPage() {
                     </div>
                   )}
                   
-                  <div className="p-4 flex flex-col justify-between flex-grow">
-                    <div>
-                      <h2 className="text-lg font-semibold mb-2 truncate">{product.title}</h2>
-                      <div className="flex justify-between items-start">
-                        <div className="text-gray-600">
+                  <div className="py-4 w-full flex flex-col justify-between">
+                    <div className=' flex flex-col gap-2'>
+                      <h2 className="font-sans text-foreground font-medium tracking-tight">{product.title}</h2>
+                      <div className="flex justify-between  items-start">
+                        <div className="text-gray-600 ">
                           {product.discount_rate !== null && product.discount_rate > 0 ? (
                             <>
-                              <div className="line-through text-sm">${(product.price / 100).toFixed(2)}</div>
+                              <div className="line-through text-sm pb-1">${(product.price / 100).toFixed(2)}</div>
                               <div className="text-base font-medium">${(product.discountLessValue ? (product.discountLessValue / 100).toFixed(2) : "0.00")}</div>
                             </>
                           ) : (
-                            <div className="text-base font-medium">${(product.price / 100).toFixed(2)}</div>
+                            <div className="text-base font-medium pb-1">${(product.price / 100).toFixed(2)}</div>
                           )}
                         </div>
                         
                         {product.discount_rate !== null && product.discount_rate > 0 && (
                           <div className="text-right">
-                            <div className="text-green-600 text-sm font-medium">
+                            <div className="text-foreground/60 pb-1 text-sm font-medium">
                               {(product.discount_rate / 100)}% off
                             </div>
-                            <div className="text-blue-600 text-sm">
+                            <div className="hidden lg:block text-foreground/60 text-sm">
                               Save ${(product.discount ? product.discount / 100 : 0 / 100).toFixed(2)}
                             </div>
                           </div>
